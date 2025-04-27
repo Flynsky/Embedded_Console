@@ -20,6 +20,9 @@ Virtual Com Port Console for STM32.
 - Portable/customisable
 
 # Setup:
+## Libary
+- add Libary/debugf_vcp to STM32 project
+
 ## CubeMX
 - Enable USB
 - Configure USB_DEVICE as VCP
