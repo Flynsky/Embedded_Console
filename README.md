@@ -20,16 +20,15 @@ Virtual Com Port Console for STM32.
 - Portable/customisable
 
 # Setup:
-## Libary
+### Libary
 - add Libary/debugf_vcp to STM32 project
 
-## CubeMX
+### CubeMX
 - Enable USB
 - Configure USB_DEVICE as VCP
 
-## CMakeList.txt
-
-- to enable floats add:
+### CMakeList.txt
+- to enable floats in printf add:
 ```
 # Enable hardware floating-point support in the compiler (if applicable)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=fpv4-sp-d16 -mfloat-abi=hard")
@@ -49,7 +48,7 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
 )
 ```
-# Convert to bin file
+### Convert to bin file
 ```
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
