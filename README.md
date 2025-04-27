@@ -1,6 +1,6 @@
 # VCP-Console
-Com Port Console, printf, flashing...
-
+A simple non-intrusive
+Virtual Com Port Console for STM32.
 ```
 .-')    .-') _   _   .-')
   ( OO ). (  OO) ) ( '.( OO )_
