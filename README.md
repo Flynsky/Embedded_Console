@@ -41,15 +41,10 @@ target_link_libraries(${PROJECT_NAME} m)
 
 # Allow GCC extensions (binary literals, etc.)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
-
+```
 - to export to .bin for dfu:
-# Convert output to hex and binary
-add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
-)
 ```
 ### Convert to bin file
-```
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 )
