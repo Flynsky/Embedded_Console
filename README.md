@@ -20,8 +20,8 @@ Virtual Com Port Console for STM32.
 - Portable/customisable
 
 # Setup:
-### Libary
-- add Libary/debugf_vcp to STM32 project
+### C Source Code
+- add ./Libary/debugf_vcp to STM32 project
 
 ### CubeMX
 - Enable USB
@@ -55,5 +55,5 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 )
 ```
 ## dfu
-- install https://dfu-util.sourceforge.net/
+- install/download dfu from https://dfu-util.sourceforge.net/
 - install required Driver 
