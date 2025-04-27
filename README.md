@@ -1,7 +1,8 @@
 # VCP-Console
 Com Port Console, printf, flashing...
 
-   .-')    .-') _   _   .-')
+```
+.-')    .-') _   _   .-')
   ( OO ). (  OO) ) ( '.( OO )_
  (_)---\_)/     '._ ,--.   ,--.).-----.  .-----.  
  /    _ | |'--...__)|   `.'   |'-' _'  |'-'  |  | 
@@ -10,6 +11,7 @@ Com Port Console, printf, flashing...
  .-._)   \   |  |   |  |   |  |\ `-'   /|       | 
  \       /   |  |   |  |   |  ' `----'' `-------' 
   `-----'    `--'   `--'   `--' `----'' `-------' 
+```
 
 # Features:
 - Control STM32 via Serial Monitor
@@ -25,6 +27,7 @@ Com Port Console, printf, flashing...
 ## CMakeList.txt
 
 - to enable floats add:
+```
 # Enable hardware floating-point support in the compiler (if applicable)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=fpv4-sp-d16 -mfloat-abi=hard")
 
@@ -42,12 +45,13 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
 )
-
-# Convert to bin file -> add conditional check?
+```
+# Convert to bin file
+```
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 )
-
+```
 ## dfu
 - install https://dfu-util.sourceforge.net/
 - install required Driver 
