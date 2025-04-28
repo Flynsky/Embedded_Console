@@ -2,7 +2,7 @@
  * Adds debugf for STM32.
  */
 
-#include "debugf_vcp.h"
+#include "vcp_console.h"
 // #include <stdint.h>
 // debugf
 #include <stdarg.h>      //used for debugf
