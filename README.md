@@ -16,7 +16,7 @@ Virtual Com Port Console for STM32.
 # Features:
 - Control STM32 via Serial Monitor
 - Send Messages via printf()
-- Flash Firmware
+- Flash Firmware via dfu
 - Portable/customisable
 
 # Setup:
@@ -65,6 +65,19 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 )
 ```
-## dfu
-- install/download dfu from https://dfu-util.sourceforge.net/
-- install required Driver 
+## Device Firmware Update dfu
+- install/download dfu-util from https://dfu-util.sourceforge.net/
+- install required Driver (s. dfu-util website)
+
+# Python Console
+- Install Python
+- Install packages struct, threading, pyserial, subprocess
+
+# First Steps
+- Flash the console to the microcontroller (s. Setup)
+- Connect microcontroller via USB Cable to Computer
+- Run Console ./Python Console (PC)/console.py. Should autoconnect.
+  If not: check errors. 
+	  use /l for list of connected Devices, 
+	  if y found yours, use /s number to connect
+- use /t string to send strings to your microcontroller
