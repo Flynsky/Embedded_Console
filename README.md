@@ -20,14 +20,30 @@ Virtual Com Port Console for STM32.
 - Portable/customisable
 
 # Setup:
+
 ### C Source Code
-- add ./Libary/debugf_vcp to STM32 project
+- add folder "./Embedded Code(uC)/vcp_console" to STM32 project
 
 ### CubeMX
 - Enable USB
 - Configure USB_DEVICE as VCP
 
 ### CMakeList.txt
+- add vcp_console 
+```
+# Add sources to executable
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+    vcp_console/vcp_console.c
+    # Add user sources here
+)
+
+# Add include paths
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    vcp_console
+    # Add user defined include paths
+)
+```
+
 - to enable floats in printf add:
 ```
 # Enable hardware floating-point support in the compiler (if applicable)
