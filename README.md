@@ -1,6 +1,6 @@
 # VCP-Console
-A simple non-intrusive
-Virtual Com Port Console for STM32.
+A simple STLink alternative.
+It´s a Console acessible vias USB (Virtual Com Port) for STM32.
 ```
 .-')    .-') _   _   .-')
   ( OO ). (  OO) ) ( '.( OO )_
