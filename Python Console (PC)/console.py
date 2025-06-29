@@ -112,7 +112,7 @@ class INTERFACE:
         ports = serial.tools.list_ports.comports()
         # test for stm32
         for port in ports:
-            if "STM" in str(port.manufacturer) or "Arduino" in str(port.manufacturer):
+            if "STM" in str(port.manufacturer) or "Arduino" in str(port.manufacturer)or "Esp" in str(port.manufacturer):
                 self.Port = port
                 self.Serial = serial.Serial(self.Port.device, baudrate=9600, timeout=1)
                 break
