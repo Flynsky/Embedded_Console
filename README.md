@@ -1,32 +1,25 @@
-# VCP-Console
-A simple STLink alternative.
-It´s a Console acessible vias USB (Virtual Com Port) for STM32.
-```
-.-')    .-') _   _   .-')
-  ( OO ). (  OO) ) ( '.( OO )_
- (_)---\_)/     '._ ,--.   ,--.).-----.  .-----.  
- /    _ | |'--...__)|   `.'   |'-' _'  |'-'  |  | 
- \  :` `. '--.  .--'|         |   |_  <    .'  /  
-  '..`''.)   |  |   |  |'.'|  |.-.  |  | .'  /__  
- .-._)   \   |  |   |  |   |  |\ `-'   /|       | 
- \       /   |  |   |  |   |  ' `----'' `-------' 
-  `-----'    `--'   `--'   `--' `----'' `-------' 
-```
+# Embedded_Console
 
 # Features:
-- Control STM32 via Serial Monitor
+- Control Arduino, STM32 or any other C++ microcontroller via Sting-Based Commands
 - Send Messages via printf()
 - Flash Firmware via dfu
 - Portable/customisable
 
-# Setup:
-
 ## Overview
 ![Diagram](./doc/pic/overview_uml.drawio.png)
 
-### C Source Code
-- add folder "./Embedded Code(uC)/vcp_console" to STM32 project
+## Setting it up:
+### Adding Microcontroller Firmware
+- Copy or include ./firmware-mcu/vcp_console/ in your project.
+- Choose with what hardware y wanna acess the console. UART? USB? Serial?
+- For ArduinoIde generate a stream objekt with given Hardware.
+  -> everything else:
+  overwrite all virtual methods from <<interface>> class stream wich y need and use that class instead.
+- now create a console object with given stream.
+- in this console edit decodeMessage() for what message should do what.
 
+### STM specific setting for best experience
 ### CubeMX
 - Enable USB
 - Configure USB_DEVICE as VCP
@@ -76,7 +69,7 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 - Install Python
 - Install packages struct, threading, pyserial, subprocess
 
-# First Steps
+## First bootup:
 - Flash the console to the microcontroller (s. Setup)
 - Connect microcontroller via USB Cable to Computer
 - Run Console ./Python Console (PC)/console.py. Should autoconnect.
@@ -84,3 +77,4 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 	  use /l for list of connected Devices, 
 	  if y found yours, use /s number to connect
 - use /t string to send strings to your microcontroller
+
