@@ -21,6 +21,9 @@ It´s a Console acessible vias USB (Virtual Com Port) for STM32.
 
 # Setup:
 
+## Overview
+![Diagram](./doc/pic/overview_uml.drawio.png)
+
 ### C Source Code
 - add folder "./Embedded Code(uC)/vcp_console" to STM32 project
 
