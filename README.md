@@ -7,7 +7,7 @@
 - Portable/customisable
 
 ## Overview
-![Diagram](./doc/pic/overview_uml.drawio.svg)
+![Diagram](./doc/pic/overview_uml.svg)
 
 ## Setting it up:
 ### Adding Microcontroller Firmware
