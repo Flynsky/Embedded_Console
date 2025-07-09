@@ -44,6 +44,12 @@ HAL_delay(10):
 - Compile as CMake Project
 
 ### Change CMake projet form C to Cpp
+- rename main.c to main.cpp,
+- change the file name main.c to main.cpp in cmake\stm32cubemx\CMakeLists.txt,
+- add C++ as a language to CMakeLists.txt:
+```CMake
+enable_language(C CXX ASM)
+```
 
 ### CMakeList.txt
 - add libary: 
