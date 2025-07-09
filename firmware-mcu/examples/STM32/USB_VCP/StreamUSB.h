@@ -37,7 +37,6 @@ void inline StreamUSB ::out(const char *buffer,
                             const unsigned int buffer_size) {
   const unsigned int RECONNECT_TRYS = 5;
   const unsigned int RECONNECT_TIMEOUT = 5;
-
   char status = 1;
   char trys = 0;
   do {

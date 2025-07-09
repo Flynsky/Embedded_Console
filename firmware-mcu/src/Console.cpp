@@ -9,59 +9,60 @@ bool Console::recieveCommands() {
     // printf("Received data: %s\n", UserRxBufferFS);
 
     /*decode message*/
-    char command[4] = {0}; // Store the command (e.g., "/C")
-    float param0 = -1, param1 = -1, param2 = -1,
-          param3 = -1; // Up to 4 parameters
+    char command[4] = {0};
+    float param0 = -1, param1 = -1, param2 = -1, param3 = -1;
 
-    /*Use sscanf to extract the command and up to 4 floats*/
     int num_params = sscanf(stream.getBuffer(), "%s %f %f %f %f", command,
                             &param0, &param1, &param2, &param3);
-    (void)num_params; // printf("num_params:%i\n", num_params);
+    if (num_params) {
 
-    // Print the command and the parameters
-    printf("~rec:%s|%f|%f|%f|%f|\n", command, param0, param1, param2, param3);
+      // Print the command and the parameters
+      printf("~rec:%s|%f|%f|%f|%f|\n", command, param0, param1, param2, param3);
 
-    // printf("r:%i,n:%i\n",com_encoded, (int)('d' << 24 | 'f' << 16 | 'u' << 8
-    // | 0));
-    int com_encoded =
-        (int)((command[0] << 24) | (command[1] << 16) | (command[2] << 8) |
-              command[3]); // encodes 4 char in one int to be compared by switch
-                           // case
-    switch (com_encoded) {
-    /**here are the executions of all the commands */
-    /*help*/
-    case (int)('?' << 24 | 0): {
-      printf("\n--help--\n");
-      printf("-[str command]_[4x float param]\n");
-      printf("-?|this help screen\n");
-      printf("-dfu|Device Firmware Update\n");
-      printf("-pa [freq] [dfu \\%]|Sets Phase A Freq\n");
-      printf("\n");
-      result = true;
-      break;
-    }
+      // printf("r:%i,n:%i\n",com_encoded, (int)('d' << 24 | 'f' << 16 | 'u' <<
+      // 8 | 0));
 
-    case (int)('b' << 24 | 0): {
-      printf(">Battery Voltage:69V");
-      printf("\n");
-      result = true;
-      break;
-    }
+      // encode command to int to use switch case
+      int com_encoded =
+          (int)((command[0] << 24) | (command[1] << 16) | (command[2] << 8) |
+                command[3]); // encodes 4 char in one int to be compared by
+                             // switch case
+      switch (com_encoded) {
+      /**here are the executions of all the commands */
+      /*help*/
+      case (int)('?' << 24 | 0): {
+        printf("\n--help--\n");
+        printf("-[str command]_[4x float param]\n");
+        printf("-?|this help screen\n");
+        printf("-dfu|Device Firmware Update\n");
+        printf("-pa [freq] [dfu \\%]|Sets Phase A Freq\n");
+        printf("\n");
+        result = true;
+        break;
+      }
 
-    /*dfu update*/
-    case (int)('d' << 24 | 'f' << 16 | 'u' << 8 | 0): {
-      printf("\n--DFU update--\n");
-      jumpToBootloader();
-      result = true;
-      break;
-    }
+      case (int)('b' << 24 | 0): {
+        printf(">Battery Voltage:69V");
+        printf("\n");
+        result = true;
+        break;
+      }
 
-    default: {
-      printf("unknown commnad\n");
-      break;
+      /*dfu update*/
+      case (int)('d' << 24 | 'f' << 16 | 'u' << 8 | 0): {
+        printf("\n--DFU update--\n");
+        jumpToBootloader();
+        result = true;
+        break;
+      }
+
+      default: {
+        printf("unknown commnad\n");
+        break;
+      }
+      }
+      stream.clearBuffer();
     }
-    }
-    stream.clearBuffer();
   }
   return result;
 }
