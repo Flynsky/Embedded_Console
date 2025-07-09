@@ -64,6 +64,10 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 ## Device Firmware Update dfu
 - install/download dfu-util from https://dfu-util.sourceforge.net/
 - install required Driver (s. dfu-util website)
+- flash with
+```
+.\dfu-util-static.exe -a 0 -i 0 -s 0x08000000:leave -D .\build\Debug\ProjekName.bin
+```
 
 # Python Console
 - Install Python
