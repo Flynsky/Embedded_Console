@@ -5,7 +5,6 @@
 class Console {
   IStream &stream;
   Console(IStream &Stream) : stream(Stream) { startupMessage(); }
-
 public:
   bool recieveCommands();
   void manageStatusLED();
@@ -35,7 +34,7 @@ bool inline Console::printf(const char *format, ...) {
   vsnprintf(buffer, buffer_size + 1, format, args);
   va_end(args);
 
-  stream.out(buffer,buffer_size);
+  stream.out(buffer, buffer_size);
   delete[] buffer;
   return true;
 }
