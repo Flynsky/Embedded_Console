@@ -38,12 +38,12 @@ HAL_delay(10):
 ### STM specific setting for best experience
 <details>
 	
-### CubeMX
+### 1. CubeMX
 - Enable USB
 - Configure USB_DEVICE as VCP
 - Compile as CMake Project
 
-### Change CMake projet form C to Cpp
+### 2. Change CMake projet form C to Cpp
 - rename main.c to main.cpp,
 - change the file name main.c to main.cpp in cmake\stm32cubemx\CMakeLists.txt,
 - add C++ as a language to CMakeLists.txt:
@@ -51,7 +51,7 @@ HAL_delay(10):
 enable_language(C CXX ASM)
 ```
 
-### CMakeList.txt
+### 3. CMakeList.txt
 - add libary: 
 
 ```CMake
@@ -83,9 +83,9 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 )
 ```
 
-## Device Firmware Update dfu
+## 4. Device Firmware Update via dfu-util
 - install/download dfu-util from https://dfu-util.sourceforge.net/
-- install required Driver (s. dfu-util website)
+- Windows only: install required Driver (s. dfu-util website)
 - flash with
 ```
 .\dfu-util-static.exe -a 0 -i 0 -s 0x08000000:leave -D .\build\Debug\ProjekName.bin
