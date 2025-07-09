@@ -20,9 +20,9 @@
 #include "usbd_cdc_if.h" //access to the virtual com port buffer. DeInt of Vcp for dfu uploads
 extern uint8_t UserRxBufferFS[]; // buffer where commands get written to
 
-class StreamUSB : IStream {
+class StreamStmUSB : IStream {
 public:
-  StreamUSB() { clearBuffer(); };
+  StreamStmUSB () { clearBuffer(); };
   bool isAvaliable() { return (UserRxBufferFS[0]) ? true : false; };
   const char *getBuffer() { return (const char *)UserRxBufferFS; };
   bool clearBuffer() {
