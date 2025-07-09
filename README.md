@@ -1,6 +1,5 @@
 # Embedded_Console
-
-# Features:
+## Features:
 - Control Arduino, STM32 or any other C++ microcontroller via Sting-Based Commands
 - Send Messages via printf()
 - Flash Firmware via dfu
@@ -9,39 +8,55 @@
 ## Overview
 ![Diagram](./doc/pic/overview_uml.svg)
 
-## Setting it up:
+## Getting Started
 ### Adding Microcontroller Firmware
-- Copy or include ./firmware-mcu/vcp_console/ in your project.
+- Copy or include ./firmware-mcu/ in your project.
 - Choose with what hardware y wanna acess the console. UART? USB? Serial?
-- For ArduinoIde generate a stream objekt with given Hardware.
-  -> everything else:
-  overwrite all virtual methods from <<interface>> class stream wich y need and use that class instead.
-- now create a console object with given stream.
-- in this console edit decodeMessage() for what message should do what.
+- Choose an exisitng Stream object or create your own by inheriting from <<interface>> IStream.h. 
+- create a console object with given stream.
+```Cpp
+StreamStmUSB streamUSB;
+console(streamUSB);
+```
+- rework bool Console::recieveCommands() in /src/Console.cpp to fit your needs.
+- call console.recieveCommands() periodicly in your code (as quick as feasable).
+```Cpp
+while(1){
+console.recieveCommands();
+HAL_delay(10):
+}
+```
+## First bootup
+- Flash the microcontroller with console (s. Setup)
+- Connect microcontroller via USB Cable to Computer
+- Run Console ./Python Console (PC)/console.py. Should autoconnect.
+  If not: check errors. 
+	  use /l for list of connected Devices, 
+	  if y found yours, use /s number to connect
+- use /t string to send strings to your microcontroller
 
 ### STM specific setting for best experience
+<details>
+	
 ### CubeMX
 - Enable USB
 - Configure USB_DEVICE as VCP
+- Compile as CMake Project
+
+### Change CMake projet form C to Cpp
 
 ### CMakeList.txt
-- add vcp_console 
-```
-# Add sources to executable
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    vcp_console/vcp_console.c
-    # Add user sources here
-)
+- add libary: 
 
-# Add include paths
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    vcp_console
-    # Add user defined include paths
+```CMake
+add_subdirectory(./Embedded_Console/firmware-mcu/)
+target_link_libraries(${CMAKE_PROJECT_NAME}
+    embedded_console
 )
 ```
 
 - to enable floats in printf add:
-```
+```CMake
 # Enable hardware floating-point support in the compiler (if applicable)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=fpv4-sp-d16 -mfloat-abi=hard")
 
@@ -55,12 +70,13 @@ target_link_libraries(${PROJECT_NAME} m)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
 ```
 - to export to .bin for dfu:
-```
-### Convert to bin file
+```CMake
+### to export to .bin for dfu:
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 )
 ```
+
 ## Device Firmware Update dfu
 - install/download dfu-util from https://dfu-util.sourceforge.net/
 - install required Driver (s. dfu-util website)
@@ -68,17 +84,9 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 ```
 .\dfu-util-static.exe -a 0 -i 0 -s 0x08000000:leave -D .\build\Debug\ProjekName.bin
 ```
+</details>
 
 # Python Console
 - Install Python
 - Install packages struct, threading, pyserial, subprocess
-
-## First bootup:
-- Flash the console to the microcontroller (s. Setup)
-- Connect microcontroller via USB Cable to Computer
-- Run Console ./Python Console (PC)/console.py. Should autoconnect.
-  If not: check errors. 
-	  use /l for list of connected Devices, 
-	  if y found yours, use /s number to connect
-- use /t string to send strings to your microcontroller
 
