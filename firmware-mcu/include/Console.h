@@ -2,10 +2,12 @@
 
 #include "IStream.h"
 
-class Console {
+class Console
+{
   IStream &stream;
-  Console(IStream &Stream) : stream(Stream) { startupMessage(); }
+
 public:
+  explicit Console(IStream &Stream) : stream(Stream) {}
   bool recieveCommands();
   void manageStatusLED();
   bool printf(const char *__restrict format, ...);
@@ -15,7 +17,8 @@ public:
 
 #include <cstdarg>
 #include <cstdio>
-bool inline Console::printf(const char *format, ...) {
+bool inline Console::printf(const char *format, ...)
+{
   va_list args;
   va_start(args, format);
 
