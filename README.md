@@ -9,6 +9,8 @@
 ![Diagram](./doc/pic/overview_uml.svg)
 
 ## Getting Started
+<details>
+
 ### Adding Microcontroller Firmware
 - Copy or include ./firmware-mcu/ in your project.
 - Choose with what hardware y wanna acess the console. UART? USB? Serial?
@@ -28,7 +30,11 @@ console.recieveCommands();
 HAL_delay(10):
 }
 ```
+</details>
+
 ## First bootup
+<details>
+	
 - Flash the microcontroller with console (s. Setup)
 - Connect microcontroller via USB Cable to Computer
 - Run Console ./Python Console (PC)/console.py. Should autoconnect.
@@ -36,8 +42,9 @@ HAL_delay(10):
 	  use /l for list of connected Devices, 
 	  if y found yours, use /s number to connect
 - use /t string to send strings to your microcontroller
+</details>
 
-### STM specific setting for best experience
+## STM specific setting for best experience
 <details>
 	
 ### 1. CubeMX
