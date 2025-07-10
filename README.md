@@ -16,7 +16,7 @@
 - create a console object with given stream.
 ```Cpp
 StreamStmUSB streamUSB;
-console(streamUSB);
+Console console(streamUSB);
 ```
 - rework bool Console::recieveCommands() in /src/Console.cpp to fit your needs.
 - call console.recieveCommands() periodicly in your code (as quick as feasable).
