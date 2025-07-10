@@ -10,7 +10,7 @@
 
 ## Getting Started
 <details>
-
+	
 ### Adding Microcontroller Firmware
 - Copy or include ./firmware-mcu/ in your project.
 - Choose with what hardware y wanna acess the console. UART? USB? Serial?
@@ -34,7 +34,7 @@ HAL_delay(10):
 
 ## First bootup
 <details>
-	
+
 - Flash the microcontroller with console (s. Setup)
 - Connect microcontroller via USB Cable to Computer
 - Run Console ./Python Console (PC)/console.py. Should autoconnect.
