@@ -42,46 +42,44 @@ void inline StreamStmUSB ::out(const char *buffer,
 {
   const unsigned int RECONNECT_TRYS = 5;
   const unsigned int RECONNECT_TIMEOUT = 5;
-  char status = 1;
+  
+  char status = USBD_FAIL;
   char trys = 0;
-  do
+  while (trys < RECONNECT_TRYS && status != USBD_OK)
   {
-    HAL_Delay(RECONNECT_TIMEOUT);
     status = CDC_Transmit_FS(
-        (uint8_t *)buffer, (uint16_t)buffer_size); // Send data via USB}while(status != USBD_OK)
+        (uint8_t *)buffer, (uint16_t)buffer_size);
     trys++;
-    if (trys > RECONNECT_TRYS)
-    {
-      break;
-    }
-  } while (status == USBD_BUSY);
+    HAL_Delay(RECONNECT_TIMEOUT);
+  }
 }
-
-extern USBD_HandleTypeDef hUsbDeviceFS;
-extern USBD_DescriptorsTypeDef FS_Desc;
 
 // software jump to bootloader
 void inline StreamStmUSB::jumpToBootloader()
 {
-  out("dfu updating", 13);
-  // Disables CDC USB
+  extern USBD_HandleTypeDef hUsbDeviceFS;
+
+  // look them up in AN2606
+  const uint32_t bootloader_address = 0x1FFF0000; // STM32L4 system memory
+
+  // out("dfu updating", 13);
+
+  /* Disables CDC USB*/
   USBD_Stop(&hUsbDeviceFS);
   USBD_DeInit(&hUsbDeviceFS);
-
-  // HAL_DeInit();
-  // HAL_RCC_DeInit();
 
   // Disable all interrupts
   __disable_irq();
 
-  // Reset USB peripheral (optional, but good practice)
-  // RCC->APB1ENR1 &= ~RCC_APB1ENR1_USBFSEN;
-  // RCC->APB1ENR1 |= RCC_APB1ENR1_USBFSEN;
+  /* Clear Interrupt Enable Register & Interrupt Pending Register */
+  for (size_t i = 0; i < sizeof(NVIC->ICER) / sizeof(NVIC->ICER[0]); i++)
+  {
+    NVIC->ICER[i] = 0xFFFFFFFF;
+    NVIC->ICPR[i] = 0xFFFFFFFF;
+  }
 
-  // Set the vector table MSP and jump to bootloader
-  // look them up in AN2606
-  // uint32_t bootloader_address = 0x1FFF0000; // STM32L4 system memory
-  uint32_t bootloader_address = 0x1FFFC400; // STM32F4 system memory
+  /* Re-enable all interrupts */
+  __enable_irq();
 
   __set_MSP(*(volatile uint32_t *)bootloader_address);
   void (*bootloader_jump)(void) = (void (*)(void))(*(volatile uint32_t *)(bootloader_address + 4));
