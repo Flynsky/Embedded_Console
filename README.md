@@ -77,9 +77,18 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
 ```
 - to export to .bin for dfu:
 ```CMake
-### to export to .bin for dfu:
+# to export to .bin for dfu:
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
+)
+# post-build automatic upload
+add_custom_command(TARGET stm32f401ConsoleTest POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Flashing via DFU..."
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/dfu-util-static.exe
+            -a 0 -i 0 -s 0x08000000:leave
+            -D ${CMAKE_CURRENT_BINARY_DIR}/stm32f401ConsoleTest.bin
+    COMMENT "Uploading firmware using dfu-util (live output)"
+    VERBATIM
 )
 ```
 
