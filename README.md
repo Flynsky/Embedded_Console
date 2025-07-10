@@ -30,11 +30,7 @@ console.recieveCommands();
 HAL_delay(10):
 }
 ```
-</details>
-
-## First bootup
-<details>
-
+### First bootup
 - Flash the microcontroller with console (s. Setup)
 - Connect microcontroller via USB Cable to Computer
 - Run Console ./Python Console (PC)/console.py. Should autoconnect.
@@ -42,9 +38,10 @@ HAL_delay(10):
 	  use /l for list of connected Devices, 
 	  if y found yours, use /s number to connect
 - use /t string to send strings to your microcontroller
+
 </details>
 
-## STM specific setting for best experience
+## Complete Project Setup for STM32
 <details>
 	
 ### 1. CubeMX
