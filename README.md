@@ -15,6 +15,8 @@
 - Choose an exisitng Stream object or create your own by inheriting from <<interface>> IStream.h. 
 - create a console object with given stream.
 ```Cpp
+#include "Console.h"
+#include "StreamStmUSB.h"
 StreamStmUSB streamUSB;
 Console console(streamUSB);
 ```
