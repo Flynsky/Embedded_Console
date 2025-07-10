@@ -15,8 +15,10 @@
 - Choose an exisitng Stream object or create your own by inheriting from <<interface>> IStream.h. 
 - create a console object with given stream.
 ```Cpp
+#include "Console.h"
+#include "StreamStmUSB.h"
 StreamStmUSB streamUSB;
-console(streamUSB);
+Console console(streamUSB);
 ```
 - rework bool Console::recieveCommands() in /src/Console.cpp to fit your needs.
 - call console.recieveCommands() periodicly in your code (as quick as feasable).
@@ -38,12 +40,12 @@ HAL_delay(10):
 ### STM specific setting for best experience
 <details>
 	
-### CubeMX
+### 1. CubeMX
 - Enable USB
 - Configure USB_DEVICE as VCP
 - Compile as CMake Project
 
-### Change CMake projet form C to Cpp
+### 2. Change CMake projet form C to Cpp
 - rename main.c to main.cpp,
 - change the file name main.c to main.cpp in cmake\stm32cubemx\CMakeLists.txt,
 - add C++ as a language to CMakeLists.txt:
@@ -51,7 +53,7 @@ HAL_delay(10):
 enable_language(C CXX ASM)
 ```
 
-### CMakeList.txt
+### 3. CMakeList.txt
 - add libary: 
 
 ```CMake
@@ -92,9 +94,9 @@ add_custom_command(TARGET stm32f401ConsoleTest POST_BUILD
 )
 ```
 
-## Device Firmware Update dfu
+## 4. Device Firmware Update via dfu-util
 - install/download dfu-util from https://dfu-util.sourceforge.net/
-- install required Driver (s. dfu-util website)
+- Windows only: install required Driver (s. dfu-util website)
 - flash with
 ```
 .\dfu-util-static.exe -a 0 -i 0 -s 0x08000000:leave -D .\build\Debug\ProjekName.bin
