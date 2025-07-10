@@ -105,6 +105,10 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 ```
 .\dfu-util-static.exe -a 0 -i 0 -s 0x08000000:leave -D .\build\Debug\ProjekName.bin
 ```
+- optional: change suffix(validate firmware)
+```
+.\dfu-suffix.exe -v 0x0483 -p 0xdf11 -d 0x2200 -a .\build\Debug\stm32f401ConsoleTest.bin 
+```
 </details>
 
 # Python Console
