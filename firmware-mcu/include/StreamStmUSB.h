@@ -42,7 +42,7 @@ void inline StreamStmUSB ::out(const char *buffer,
 {
   const unsigned int RECONNECT_TRYS = 5;
   const unsigned int RECONNECT_TIMEOUT = 5;
-  
+
   char status = USBD_FAIL;
   char trys = 0;
   while (trys < RECONNECT_TRYS && status != USBD_OK)
@@ -59,8 +59,8 @@ void inline StreamStmUSB::jumpToBootloader()
 {
   extern USBD_HandleTypeDef hUsbDeviceFS;
 
-  // look them up in AN2606
-  const uint32_t bootloader_address = 0x1FFF0000; // STM32L4 system memory
+  // look system memory adress up in AN2606
+  const uint32_t bootloader_address = 0x1FFF0000; // STM32L4 
 
   // out("dfu updating", 13);
 

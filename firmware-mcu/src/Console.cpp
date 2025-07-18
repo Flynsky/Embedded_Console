@@ -1,12 +1,16 @@
 
 #include "Console.h"
 // #include "StreamStmUSB.h"
+#include "main.h"
 
+void sendMDIO(float freq_kHz);
 
-bool Console::recieveCommands() {
+bool Console::recieveCommands()
+{
   bool result = false;
   /*checks if 0 is overridden -> new message in buffer*/
-  if (stream.isAvaliable()) {
+  if (stream.isAvaliable())
+  {
     // printf("Received data: %s\n", UserRxBufferFS);
 
     /*decode message*/
@@ -15,7 +19,8 @@ bool Console::recieveCommands() {
 
     int num_params = sscanf(stream.getBuffer(), "%s %f %f %f %f", command,
                             &param0, &param1, &param2, &param3);
-    if (num_params) {
+    if (num_params)
+    {
 
       // Print the command and the parameters
       printf("~rec:%s|%f|%f|%f|%f|\n", command, param0, param1, param2, param3);
@@ -28,10 +33,12 @@ bool Console::recieveCommands() {
           (int)((command[0] << 24) | (command[1] << 16) | (command[2] << 8) |
                 command[3]); // encodes 4 char in one int to be compared by
                              // switch case
-      switch (com_encoded) {
+      switch (com_encoded)
+      {
       /**here are the executions of all the commands */
       /*help*/
-      case (int)('?' << 24 | 0): {
+      case (int)('?' << 24 | 0):
+      {
         printf("\n--help--\n");
         printf("-[str command]_[4x float param]\n");
         printf("-?|this help screen\n");
@@ -42,7 +49,16 @@ bool Console::recieveCommands() {
         break;
       }
 
-      case (int)('b' << 24 | 0): {
+      case (int)('m' << 24 | 0):
+      {
+        printf(">Send MDIO\n");
+        sendMDIO(param0);
+        result = true;
+        break;
+      }
+
+      case (int)('b' << 24 | 0):
+      {
         printf(">Battery Voltage:69V");
         printf("\n");
         result = true;
@@ -50,14 +66,16 @@ bool Console::recieveCommands() {
       }
 
       /*dfu update*/
-      case (int)('d' << 24 | 'f' << 16 | 'u' << 8 | 0): {
+      case (int)('d' << 24 | 'f' << 16 | 'u' << 8 | 0):
+      {
         printf("\n--DFU update--\n");
         stream.jumpToBootloader();
         result = false;
         break;
       }
 
-      default: {
+      default:
+      {
         printf("unknown commnad\n");
         break;
       }
@@ -68,7 +86,8 @@ bool Console::recieveCommands() {
   return result;
 }
 
-void Console::startupMessage() {
+void Console::startupMessage()
+{
   printf("\033[35m");
   printf("  .-')    .-') _   _   .-')\n");
   printf(" ( OO ). (  OO) ) ( '.( OO )_\n");
@@ -82,6 +101,115 @@ void Console::startupMessage() {
   printf("\033[0m");
 }
 
+extern TIM_HandleTypeDef htim1;
+int count = 0;
+void sendMDIO(float freq_kHz)
+{
+  // STM32 HAL: T = 2.37 us / 421kHz
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_SET);
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_RESET);
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_SET);
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_RESET);
+
+  // ASSEMBLY ARM M4: T = 250ns / 4MHz
+  // __asm volatile (
+  //     "LDR r0, =0x40020418\n"       // r0 = address of GPIOB->BSRR
+  //     "MOV r1, #(1 << 9)\n"         // r1 = bit mask to SET PB9
+  //     "STR r1, [r0]\n"              // write r1 to BSRR (set PB9)
+
+  //     "MOV r1, #(1 << (9 + 16))\n"  // r1 = bit mask to RESET PB9
+  //     "STR r1, [r0]\n"              // write r1 to BSRR (reset PB9)
+
+  //     "MOV r1, #(1 << 9)\n"
+  //     "STR r1, [r0]\n"
+
+  //     "MOV r1, #(1 << (9 + 16))\n"
+  //     "STR r1, [r0]\n"
+  // );
+
+  //timer: T= 24us / 41kHz
+  // __HAL_RCC_TIM1_CLK_ENABLE();
+
+  // htim1.Instance = TIM1;
+  // htim1.Init.Prescaler = 8399; // 84MHz / (8399 + 1) = 10kHz
+  // htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  // htim1.Init.Period = 9999; // 10kHz / (9999 + 1) = 1Hz overflow
+  // htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  // htim1.Init.RepetitionCounter = 0;
+  // htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+
+  // if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
+  //   Error_Handler();
+  count = 0;
+  // uint32_t  i = (uint32_t) (80000.0 / freq_kHz);
+  uint32_t i = (uint32_t)freq_kHz;
+  htim1.Instance = TIM1;
+  htim1.Init.Prescaler = 0;
+  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim1.Init.Period = i;
+  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim1.Init.RepetitionCounter = 0;
+  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  HAL_TIM_Base_Init(&htim1);
+
+  printf("htim1.Init.Period:%lu\n", htim1.Init.Period);
+
+  HAL_NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+  HAL_TIM_Base_Start_IT(&htim1);
+}
+
+void TIM1_UP_TIM10_IRQHandler(void)
+{
+  // HAL_TIM_IRQHandler(&htim1);
+
+  TIM_HandleTypeDef *htim = &htim1;
+  uint32_t itsource = htim->Instance->DIER;
+  uint32_t itflag = htim->Instance->SR;
+
+  /* TIM Update event */
+  if ((itflag & (TIM_FLAG_UPDATE)) == (TIM_FLAG_UPDATE))
+  {
+    if ((itsource & (TIM_IT_UPDATE)) == (TIM_IT_UPDATE))
+    {
+      __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_UPDATE);
+      
+      HAL_TIM_PeriodElapsedCallback(htim);
+
+    }
+  }
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (count == 32)
+  {
+    HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+  }
+  else
+  {
+    if (htim->Instance == TIM1)
+    {
+      count++;
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_9);
+
+      // // Toggle Assembly:
+      // static uint8_t pin_state = 0;
+
+      // // Fast pin toggle using BSRR
+      // if (pin_state)
+      // {
+      //   GPIOB->BSRR = (1 << (9 + 16)); // Reset PB9
+      //   pin_state = 0;
+      // }
+      // else
+      // {
+      //   GPIOB->BSRR = (1 << 9); // Set PB9
+      //   pin_state = 1;
+      // }
+    }
+  }
+}
 
 // extern USBD_HandleTypeDef hUsbDeviceFS;
 // extern USBD_DescriptorsTypeDef FS_Desc;
