@@ -105,30 +105,148 @@ extern TIM_HandleTypeDef htim1;
 int count = 0;
 void sendMDIO(float freq_kHz)
 {
-  // STM32 HAL: T = 2.37 us / 421kHz
+  // STM32 HAL: T = 875n us / 1.2MHz
+  // __disable_irq();
   //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_SET);
   //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_RESET);
   //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_SET);
   //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_RESET);
+  //     HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_SET);
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_RESET);
+  //     HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_SET);
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_RESET);
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_SET);
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_RESET);
+  //     HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_SET);
+  //  HAL_GPIO_WritePin(MCLK_GPIO_Port, MCLK_Pin, GPIO_PIN_RESET);
+  // __enable_irq();
 
-  // ASSEMBLY ARM M4: T = 250ns / 4MHz
-  // __asm volatile (
-  //     "LDR r0, =0x40020418\n"       // r0 = address of GPIOB->BSRR
-  //     "MOV r1, #(1 << 9)\n"         // r1 = bit mask to SET PB9
-  //     "STR r1, [r0]\n"              // write r1 to BSRR (set PB9)
+  // NO HALL ARM M4: T = 83n / 12MHz
+  // needs in CMalke.List: add_compile_options(-O3 -funroll-loops)
+  __disable_irq();
 
-  //     "MOV r1, #(1 << (9 + 16))\n"  // r1 = bit mask to RESET PB9
-  //     "STR r1, [r0]\n"              // write r1 to BSRR (reset PB9)
+  volatile uint32_t *bsrr = (uint32_t *)0x40020418;
+#define PIN_MCLK 8
+#define PIN_MDIO 9
 
-  //     "MOV r1, #(1 << 9)\n"
-  //     "STR r1, [r0]\n"
+#define SET_MCLK (1 << (PIN_MCLK))
+#define RESET_MCLK (1 << (PIN_MCLK + 16))
 
-  //     "MOV r1, #(1 << (9 + 16))\n"
-  //     "STR r1, [r0]\n"
-  // );
+#define SET_MDIO (1 << (PIN_MDIO))
+#define RESET_MDIO (1 << (PIN_MDIO + 16))
 
-  //timer: T= 24us / 41kHz
-  // __HAL_RCC_TIM1_CLK_ENABLE();
+#define HIGH_BIT                 \
+  *bsrr = RESET_MCLK + SET_MDIO; \
+  __DSB();                       \
+  *bsrr = SET_MCLK + SET_MDIO;   \
+  __DSB();
+
+#define LOW_BIT                    \
+  *bsrr = RESET_MCLK + RESET_MDIO; \
+  __DSB();                         \
+  *bsrr = SET_MCLK + RESET_MDIO;   \
+  __DSB();
+
+  *bsrr = SET_MCLK + SET_MDIO;
+  *bsrr = SET_MCLK + SET_MDIO;
+  __DSB();
+
+  /*PRESCAMBLE*/
+#define TOGGLE_MDIO   \
+  *bsrr = RESET_MDIO; \
+  __DSB();            \
+  *bsrr = SET_MDIO;   \
+  __DSB();
+
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+
+  TOGGLE_MDIO
+  TOGGLE_MDIO
+
+  /*START*/
+  HIGH_BIT
+  LOW_BIT
+
+  /*OPCODE*/
+  HIGH_BIT
+  HIGH_BIT
+
+  /*PHY_ADRESS*/
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  HIGH_BIT
+  LOW_BIT
+
+  /*REG_ADRESS*/
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  HIGH_BIT
+  HIGH_BIT
+
+  /*TA*/
+  HIGH_BIT
+  LOW_BIT
+
+  /*DATA*/
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  LOW_BIT
+  HIGH_BIT
+  LOW_BIT
+  HIGH_BIT
+
+  /*end*/
+  *bsrr = RESET_MDIO + RESET_MCLK;
+  __enable_irq();
+
+  // timer: T= 5,2us / 192 kHz
+  //  __HAL_RCC_TIM1_CLK_ENABLE();
 
   // htim1.Instance = TIM1;
   // htim1.Init.Prescaler = 8399; // 84MHz / (8399 + 1) = 10kHz
@@ -140,23 +258,22 @@ void sendMDIO(float freq_kHz)
 
   // if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
   //   Error_Handler();
-  count = 0;
-  // uint32_t  i = (uint32_t) (80000.0 / freq_kHz);
-  uint32_t i = (uint32_t)freq_kHz;
-  htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
-  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = i;
-  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim1.Init.RepetitionCounter = 0;
-  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  HAL_TIM_Base_Init(&htim1);
+  // count = 0;
+  // uint32_t i = (uint32_t)freq_kHz;
+  // htim1.Instance = TIM1;
+  // htim1.Init.Prescaler = 0;
+  // htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  // htim1.Init.Period = i;
+  // htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  // htim1.Init.RepetitionCounter = 0;
+  // htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  // HAL_TIM_Base_Init(&htim1);
 
-  printf("htim1.Init.Period:%lu\n", htim1.Init.Period);
+  // printf("htim1.Init.Period:%lu\n", htim1.Init.Period);
 
-  HAL_NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
-  HAL_TIM_Base_Start_IT(&htim1);
+  // HAL_NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 0, 0);
+  // HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+  // HAL_TIM_Base_Start_IT(&htim1);
 }
 
 void TIM1_UP_TIM10_IRQHandler(void)
@@ -173,9 +290,8 @@ void TIM1_UP_TIM10_IRQHandler(void)
     if ((itsource & (TIM_IT_UPDATE)) == (TIM_IT_UPDATE))
     {
       __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_UPDATE);
-      
-      HAL_TIM_PeriodElapsedCallback(htim);
 
+      HAL_TIM_PeriodElapsedCallback(htim);
     }
   }
 }
@@ -190,7 +306,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {
     if (htim->Instance == TIM1)
     {
-      count++;
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_9);
 
       // // Toggle Assembly:
@@ -209,6 +324,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       // }
     }
   }
+  count++;
 }
 
 // extern USBD_HandleTypeDef hUsbDeviceFS;

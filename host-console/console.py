@@ -259,12 +259,15 @@ class INTERFACE:
                     print(output)
 
                 case "cmake" | "cm":
+                    if self.Serial is not None:
+                        self.Serial.write(("dfu" + "\n").encode())
                     print_yellow("Build project\n")
                     # cmake --build ./build/Debug --config Debug
                     base_path = os.path.dirname(os.path.abspath(__file__))
                     base_path = os.path.dirname(base_path)
                     # print(f"Base path: {base_path}") 
-
+                    base_path = os.path.dirname(base_path)
+                    
                     build_path = os.path.join(base_path, "build", "Debug")
 
                     try:
@@ -284,41 +287,6 @@ class INTERFACE:
 
                     # # Get the absolute path to dfu-util
                     base_path = os.path.dirname(os.path.abspath(__file__))
-
-                case "flash":
-                    DFU_COMMAND = "dfu\n"
-                    BIN_LOCATION = "build", "Debug" ,"ESC.bin"
-                    print_yellow("<Flash dfu device>\n")
-                    
-                    if self.Serial is not None:
-                        print_yellow(f'Sending dfu command {repr(DFU_COMMAND)}\n')
-                        self.Serial.write((DFU_COMMAND).encode())
-                    time.sleep(0.5)
-                    
-                    # COMMAND ../../dfu-util/dfu-util -a 0 -i 0 -s 0x08000000:leave -D ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin
-
-                    # # Get the absolute path to dfu-util
-                    base_path = os.path.dirname(os.path.abspath(__file__))
-
-                    if platform.system() == "Windows":
-                        path = os.path.join(base_path, "dfu-util-static.exe")
-                        path_bin = os.path.join(
-                            os.path.dirname(base_path), *BIN_LOCATION
-                        )
-                    else:
-                        path = os.path.join(base_path, "dfu-util")
-
-                    # print(f'command: {path + " -a 0 -i 0 -s 0x08000000:leave" + " -D " + path_bin}') 
-                    
-                    # # Run it
-                    result = subprocess.run(
-                        [path, "-a","0","-i","0","-s","0x08000000:leave", "-D",path_bin], capture_output=True, text=True, check=True
-                    )
-
-                    output = result.stdout + result.stderr
-
-                    # # Show the output
-                    print(output)
 
                 case "quit" | "q":
                     print_yellow("<shuting down Interface>\n")
