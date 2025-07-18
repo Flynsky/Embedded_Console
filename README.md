@@ -51,13 +51,27 @@ HAL_delay(10):
 
 ### 2. Change CMake projet form C to Cpp
 - rename main.c to main.cpp,
-- change the file name main.c to main.cpp in cmake\stm32cubemx\CMakeLists.txt,
+- in *cmake\stm32cubemx\CMakeLists.txt* change the file name main.c to main.cpp
+- in *.\CMakeLists.txt* add/change:
+```CMake
+# Add sources to executable
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+    # Add user sources here
+    ./Embedded_Console/firmware-mcu/src/Console.cpp
+)
+
+# Add include paths
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    # Add user defined include paths
+    ./Embedded_Console/firmware-mcu/include
+)
+```
+
+### 3. CMakeList.txt
 - add C++ as a language to CMakeLists.txt:
 ```CMake
 enable_language(C CXX ASM)
 ```
-
-### 3. CMakeList.txt
 - add libary: 
 
 ```CMake
@@ -88,11 +102,11 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 )
 # post-build automatic upload
-add_custom_command(TARGET stm32f401ConsoleTest POST_BUILD
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Flashing via DFU..."
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/dfu-util-static.exe
             -a 0 -i 0 -s 0x08000000:leave
-            -D ${CMAKE_CURRENT_BINARY_DIR}/stm32f401ConsoleTest.bin
+            -D ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.bin
     COMMENT "Uploading firmware using dfu-util (live output)"
     VERBATIM
 )
@@ -104,6 +118,10 @@ add_custom_command(TARGET stm32f401ConsoleTest POST_BUILD
 - flash with
 ```
 .\dfu-util-static.exe -a 0 -i 0 -s 0x08000000:leave -D .\build\Debug\ProjekName.bin
+```
+- optional: change suffix(validate firmware)
+```
+.\dfu-suffix.exe -v 0x0483 -p 0xdf11 -d 0x2200 -a .\build\Debug\stm32f401ConsoleTest.bin 
 ```
 </details>
 
