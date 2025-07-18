@@ -51,18 +51,19 @@ HAL_delay(10):
 
 ### 2. Change CMake projet form C to Cpp
 - rename main.c to main.cpp,
-- in cmake\stm32cubemx\CMakeLists.txt
-- change the file name main.c to main.cpp
-- add to include_directories
+- in *cmake\stm32cubemx\CMakeLists.txt* change the file name main.c to main.cpp
+- in *.\CMakeLists.txt* add/change:
 ```CMake
-target_include_directories(stm32cubemx INTERFACE
-    ../../Embedded_Console/firmware-mcu/include
+# Add sources to executable
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+    # Add user sources here
+    ./Embedded_Console/firmware-mcu/src/Console.cpp
 )
-```
-- add to target_sources
-```CMake
-target_sources(stm32cubemx INTERFACE
-    ../../Embedded_Console/firmware-mcu/src/Console.cpp
+
+# Add include paths
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    # Add user defined include paths
+    ./Embedded_Console/firmware-mcu/include
 )
 ```
 
