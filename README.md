@@ -51,7 +51,20 @@ HAL_delay(10):
 
 ### 2. Change CMake projet form C to Cpp
 - rename main.c to main.cpp,
-- change the file name main.c to main.cpp in cmake\stm32cubemx\CMakeLists.txt,
+- in cmake\stm32cubemx\CMakeLists.txt
+- change the file name main.c to main.cpp
+- add to include_directories
+```CMake
+target_include_directories(stm32cubemx INTERFACE
+    ../../Embedded_Console/firmware-mcu/include
+)
+```
+- add to target_sources
+```CMake
+target_sources(stm32cubemx INTERFACE
+    ../../Embedded_Console/firmware-mcu/src/Console.cpp
+)
+```
 
 ### 3. CMakeList.txt
 - add C++ as a language to CMakeLists.txt:
