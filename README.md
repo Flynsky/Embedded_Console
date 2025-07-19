@@ -57,7 +57,7 @@ HAL_delay(10):
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    ./Embedded_Console/firmware-mcu/src/Console.cpp
+    ./wherever y like it/Console.cpp
 )
 
 # Add include paths
