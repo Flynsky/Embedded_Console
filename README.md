@@ -111,9 +111,23 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     VERBATIM
 )
 ```
+## ARM toolchain
+Insructions for linux
+Download from (ARM Website)[https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads] the version you need.
+Plattform: Linux
+target: bare mettal
+evtl. hard float when hardware floating point support
+````
+unzio
+mkdir /opt/arm
+mv ./arm /opt/arm
+export PATH=/opt/arm/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/bin:$PATH
+exec zsh
+which arm-none-eabi-gcc
+arm-none-eabi-gcc --version
+````
 
-## 4. Device Firmware Update via dfu-util
-- install/download dfu-util from https://dfu-util.sourceforge.net/
+## 4. Device Firmware Update via dfu-ut``install/download dfu-util from https://dfu-util.sourceforge.net/
 - Windows only: install required Driver (s. dfu-util website)
 - flash with
 ```
@@ -124,6 +138,7 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 .\dfu-suffix.exe -v 0x0483 -p 0xdf11 -d 0x2200 -a .\build\Debug\stm32f401ConsoleTest.bin 
 ```
 </details>
+
 
 # Python Console
 - Install Python
