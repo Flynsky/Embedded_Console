@@ -243,9 +243,9 @@ class INTERFACE:
                     base_path = os.path.dirname(os.path.abspath(__file__))
 
                     if platform.system() == "Windows":
-                        path = os.path.join(base_path, "dfu-util-static.exe")
+                        path = os.path.join(base_path, "dfu", "dfu-util-static.exe")
                     else:
-                        path = os.path.join(base_path, "dfu-util")
+                        path = os.path.join(base_path, "dfu", "dfu-util-static")
 
                     # print(base_path)
                     # # Run it
