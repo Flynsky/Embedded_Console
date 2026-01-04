@@ -126,7 +126,16 @@ exec zsh
 which arm-none-eabi-gcc
 arm-none-eabi-gcc --version
 ````
-
+## Compiling with CMake
+```bash
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake # Compiling
+cmake --build build # --verbose
+````
+## Searching for Devices (linux only)
+````bash
+ ls /dev/ttyACM**
+screen /dev/ttyACMyournnumebr
+````
 ## 4. Device Firmware Update via dfu-ut``install/download dfu-util from https://dfu-util.sourceforge.net/
 - Windows only: install required Driver (s. dfu-util website)
 - flash with
