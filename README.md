@@ -127,6 +127,10 @@ arm-none-eabi-gcc --version
 cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake # Compiling
 cmake --build build # --verbose
 ````
+or all in one:
+```bash
+rm -r ./build&&cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake&&cmake --build build
+````
 ## Searching for Devices (linux only)
 ````bash
  ls /dev/ttyACM**
