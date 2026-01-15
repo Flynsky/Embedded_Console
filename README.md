@@ -52,35 +52,31 @@ HAL_delay(10):
 ### 2. Change CMake projet form C to Cpp
 - rename main.c to main.cpp,
 - in *cmake\stm32cubemx\CMakeLists.txt* change the file name main.c to main.cpp
-- in *.\CMakeLists.txt* add/change:
+- 
+### 3. CMakeList.txt
+ in *.\CMakeLists.txt* add/change:
+- add C++ as a language to CMakeLists.txt:
+```CMake
+enable_language(C CXX ASM)
+```
+- add header and sources to your project
 ```CMake
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     ./wherever y like it/Console.cpp
+	# for STM32 usualy:
+    ./Core/Src/console.cpp
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ./Embedded_Console/firmware-mcu/include
+	# for STM32 usualy:
+    ./Core/Inc/ #included here to have acess to STM HAL in the console
 )
 ```
-
-### 3. CMakeList.txt
-- add C++ as a language to CMakeLists.txt:
-```CMake
-enable_language(C CXX ASM)
-```
-- add libary: 
-
-```CMake
-add_subdirectory(./Embedded_Console/firmware-mcu/)
-target_link_libraries(${CMAKE_PROJECT_NAME}
-    embedded_console
-)
-```
-
 - to enable floats in printf add:
 ```CMake
 # Enable hardware floating-point support in the compiler (if applicable)
